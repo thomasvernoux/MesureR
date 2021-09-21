@@ -233,6 +233,7 @@ Serial.println("FIN ------------------------------------------------");
 
 
   digitalWrite(pinK,LOW);
+  
 
 
   if (mesureFinale >9999){
