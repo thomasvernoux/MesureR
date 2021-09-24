@@ -36,7 +36,7 @@ int MesureBrute1VCC;
 int MesureBrute2VCC;
 int MesureBrute3VCC;
 
-int tpsDelay = 100;
+int tpsDelay = 1000;
 
 void setup() {
 
@@ -62,73 +62,7 @@ void setup() {
 
 void loop() {
 
-  digitalWrite(pinT2,LOW);
-  digitalWrite(pinT3,LOW);
-  digitalWrite(pinT1,HIGH);
   
-  delay(tpsDelay);
-  pinmesureVCC = 1;
-  Rshunt = 220;
-  pinmesureResistance = 2;
-  MesureBrute1VCC = analogRead(pinmesureVCC);
-  mesureVCC = double(MesureBrute1VCC)/1023*5;
- 
-  MesureBrute1 = analogRead(pinmesureResistance);
-  mesureResistance = double(MesureBrute1)/1023*5;
-  dV = mesureVCC - mesureResistance;
-  i = dV/Rshunt;
-
-  
-  Rmesure = (mesureResistance*Rshunt/dV);
-
-//  Serial.print("pinmesureResistance 111: ");
-//  Serial.println(mesureResistance);
-//
-//  Serial.print("pinmesureVcce 111: ");
-//  Serial.println(mesureVCC);
-//
-//
-//
-//  Serial.print("Résistance 111 : ");
-//  Serial.println(Rmesure);
-  double m1 = Rmesure;
-  double d1 = abs(1024/2 - analogRead(pinmesureResistance));
-
-
-
-  // Phase 2
-  digitalWrite(pinT1,LOW);
-  digitalWrite(pinT3,LOW);
-  digitalWrite(pinT2,HIGH);
-
-  delay(tpsDelay);
-  
-  pinmesureVCC = 3;
-  Rshunt = 1000;
-  pinmesureResistance = 2;
-  MesureBrute2VCC = analogRead(pinmesureVCC);
-  mesureVCC = double(MesureBrute2VCC)/1023*5;
-  
-  MesureBrute2 = analogRead(pinmesureResistance);
-  mesureResistance = double(MesureBrute2)/1023*5;
-  dV = mesureVCC - mesureResistance;
-  i = dV/Rshunt;
-
-  
-  Rmesure = (mesureResistance*Rshunt/dV);
-
-//  Serial.print("pinmesureResistance 222: ");
-//  Serial.println(mesureResistance);
-//
-//  Serial.print("pinmesureVcce 222: ");
-//  Serial.println(mesureVCC);
-//
-//
-//
-//  Serial.print("Résistance 222 : ");
-//  Serial.println(Rmesure);
-  double m2 = Rmesure;
-  double d2 = abs(1024/2 - analogRead(pinmesureResistance));
 
 
 
@@ -154,58 +88,23 @@ void loop() {
 
   double m3 = Rmesure;
   double d3 = abs(1024/2 - analogRead(pinmesureResistance));
+  afficher("MesureBruteVCC3",(double)MesureBrute3VCC);
+  afficher("MesureBrute3",(double)MesureBrute3);
 
-  digitalWrite(pinT1,LOW);
-  digitalWrite(pinT2,LOW);
-  digitalWrite(pinT3,LOW);
+  afficher("MesureVCC3",(double)mesureVCC);
+  afficher("MesureResistance",(double)mesureResistance);
 
-  Serial.print("mesureResistance 333: ");
-  Serial.println(mesureResistance);
+  afficher("dV",(double)dV);
+  afficher("Rmesuré",(double)Rmesure);
 
-  Serial.print("pinmesureVcce 333: ");
-  Serial.println(mesureVCC);
-
-  Serial.print("dV 333: ");
-  Serial.println(dV);
-
-  Serial.print("i 333: ");
-  Serial.println(i);
+  Serial.println();
+  
+  
+  
 
 
 
 
-  Serial.print("Résistance 333 : ");
-  Serial.println(Rmesure);
-
-
-  if (d2<d1 && d2<d3){
-    Serial.print("Résistance 2 : ");
-    Serial.println(m2);
-    Serial.println(d2);
-    mesureFinale = int(m2);
-  }
-  else if(d1<d2 && d1<d3){
-    Serial.print("Résistance 1 : ");
-    Serial.println(m1);  
-    Serial.println(d1);
-    mesureFinale = int(m1);
-  }
-  else if(d3<d2 && d3<d1){
-    Serial.print("Résistance 3 : ");
-    Serial.println(m3);  
-    Serial.println(d3);
-    mesureFinale = m3;
-    Serial.println(mesureFinale);
-  }
-  else{
-    Serial.println("ERREUR"); 
-    Serial.println(m1); 
-    Serial.println(m2); 
-    Serial.println(m3);
-    Serial.println(d1); 
-    Serial.println(d2); 
-    Serial.println(d3);  
-  }
 
 //Serial.println("DEBUG -------------------");
 //    Serial.print("m1 : ");
