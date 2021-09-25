@@ -1,38 +1,29 @@
 #include "stdio.h"
-#include <Arduino.h>
+#include "Arduino.h"
+#include "structures.h"
 
 
+struct Circuit C1;
 
 
+void setup()
+{
 
-class circuit{
-  int PinMesureVCC;
-  int PinMesureResistance;
-  int Vshunt;
-
-  void mesure(){
-    int a;
-
-    return;
-    
-  }
-
-
-  
-};
-
-void setup() {
-
-  pinMode(LED_BUILTIN,OUTPUT);
-  
-
+  pinMode(LED_BUILTIN, OUTPUT);
+  //Serial.begin(19200);
 }
 
-void loop() {
-  digitalWrite(LED_BUILTIN,HIGH);
+void loop()
+{
+  digitalWrite(LED_BUILTIN, HIGH);
   delay(500);
-  digitalWrite(LED_BUILTIN,LOW);
+  digitalWrite(LED_BUILTIN, LOW);
   delay(100);
-  
-
 }
+
+void Mesurer(Circuit C){
+
+
+  return;
+}
+ 
