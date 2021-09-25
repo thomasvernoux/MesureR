@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "stdio.h"
 #include <Arduino.h>
 
 
@@ -21,23 +21,18 @@ class circuit{
   
 };
 
-
-
-
-
-
-
-
-
-
-
-
 void setup() {
+
+  pinMode(LED_BUILTIN,OUTPUT);
   
 
 }
 
 void loop() {
+  digitalWrite(LED_BUILTIN,HIGH);
+  delay(500);
+  digitalWrite(LED_BUILTIN,LOW);
+  delay(100);
   
 
 }
