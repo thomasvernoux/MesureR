@@ -4,17 +4,15 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:\\Program Files (x86)\\Arduino",
-                "C:/Program Files (x86)/Arduino/hardware/tools/avr/avr/include",
-                "C:/Program Files (x86)/Arduino/hardware/tools/avr/lib/gcc/avr/7.3.0/include",
-                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/cores/arduino",
-                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/variants/circuitplay32u4",
-                "C:\\Program Files (x86)\\Arduino\\hardware"
+                "C:\\Program Files (x86)\\Arduino/**",
+                "A:\\Documents\\Arduino\\**",
+                "C:\\Program Files (x86)\\Arduino\\hardware/**"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "USBCON"
             ],
             "cStandard": "c17",
             "cppStandard": "c++17",
