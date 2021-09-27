@@ -29,10 +29,11 @@ Circuit *ptrC1 = &C1;
 Circuit *ptrC2 = &C2;
 Circuit *ptrC3 = &C3;
 
-
+/* Déclaration des fonctions */
 void Mesure(Circuit*);
 void Constantes_setup();
 void changer_circuit(Circuit*);
+void ouvrir_les_circuits(Circuit*,Circuit*,Circuit*);
 
 
 
@@ -103,13 +104,17 @@ void Mesure(Circuit* C){
 }
 
 void changer_circuit(Circuit* C){
-  if (not(strcmp(C.name,"C1"))){
+  if (!strcmp(C.name,"C1")){
     
   }
 
 }
 
-void 
+void ouvrir_les_circuits(Circuit* C1,Circuit* C2,Circuit* C3){
+
+
+
+}
 
 
 
