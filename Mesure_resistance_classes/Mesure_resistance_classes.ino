@@ -35,6 +35,9 @@ void Constantes_setup();
 void changer_circuit(Circuit*);
 void ouvrir_les_circuits(Circuit*,Circuit*,Circuit*);
 
+/* Déclaration des variables */
+int tps = 10; // temporisation en ms entre les changements d'états des circuits
+
 
 
 
@@ -70,6 +73,7 @@ void setup()
   pinMode(C1.pinTransistor,OUTPUT);
   pinMode(C2.pinTransistor,OUTPUT);
   pinMode(C3.pinTransistor,OUTPUT);
+  ouvrir_les_circuits(ptrC1,ptrC2,ptrC3);
 
   
 }
@@ -77,10 +81,26 @@ void setup()
 void loop()
 {
 
-
+  ouvrir_les_circuits(ptrC1,ptrC2,ptrC3);
+  digitalWrite(C1.pinTransistor,HIGH);
+  delay(tps);
   Mesure(ptrC1);
+
+
+  ouvrir_les_circuits(ptrC1,ptrC2,ptrC3);
+  digitalWrite(C2.pinTransistor,HIGH);
+  delay(tps);
   Mesure(ptrC2);
+  
+
+
+  ouvrir_les_circuits(ptrC1,ptrC2,ptrC3);
+  digitalWrite(C3.pinTransistor,HIGH);
+  delay(tps);
   Mesure(ptrC3);
+  ouvrir_les_circuits(ptrC1,ptrC2,ptrC3);
+  
+  
   Serial.println(C1.Rmesure);
   Serial.println(C2.Rmesure);
   Serial.println(C3.Rmesure);
@@ -92,7 +112,9 @@ void loop()
 }
 
 
-
+/*
+Mesure la resistance avec le circuit C
+*/
 void Mesure(Circuit* C){
 
     C->MesureBruteVCC = analogRead(C->PinMesureVcc);
@@ -103,14 +125,28 @@ void Mesure(Circuit* C){
   return;
 }
 
+
+/*
+Pas finie
+*/
 void changer_circuit(Circuit* C){
-  if (!strcmp(C.name,"C1")){
-    
+  if (!strcmp(C->name,"C1")){
+    //ouvrir_les_circuits(C1,C2,C3);
+    digitalWrite(C->pinTransistor,LOW);
+
+
   }
 
 }
 
+
+/*
+Cette fonction ouvre les 3 circuits via les transistors 2n2222
+*/
 void ouvrir_les_circuits(Circuit* C1,Circuit* C2,Circuit* C3){
+  digitalWrite(C1->pinTransistor,LOW);
+  digitalWrite(C2->pinTransistor,LOW);
+  digitalWrite(C3->pinTransistor,LOW);
 
 
 
