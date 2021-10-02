@@ -31,7 +31,7 @@ Circuit *ptrC1 = &C1;
 Circuit *ptrC2 = &C2;
 Circuit *ptrC3 = &C3;
 
-// Déclaration des fonctions
+/* Déclaration des fonctions */
 void Mesure(Circuit *);
 void Constantes_setup();
 void ouvrir_les_circuits(Circuit *, Circuit *, Circuit *);
@@ -40,9 +40,9 @@ void debugD(char txt[20], float var);
 float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3);
 void AffichageEcran(float val);
 
-// Déclaration des variables 
+/* Déclaration des variables */
 int tps = 10; // temporisation en ms entre les changements d'états des circuits
-bool ModeDebug = false;
+bool ModeDebug = true;
 int pinK = 6; // Pin qui connecte la LED (led des kilo)
 
 // Pines pour l'ecran
@@ -57,7 +57,7 @@ void setup()
 
   Mesure(ptrC1);
 
-  // SETUP STRUCTURES
+  /* SETUP STRUCTURES */
   C1.PinMesureVcc = 1;
   C1.pinMesureResistance = 2;
   C1.Rshunt = 220;
@@ -76,7 +76,7 @@ void setup()
   C3.pinTransistor = 5;
   strcpy(C3.name, "C3");
 
-  // Pines OUT
+  /* Pines OUT */
   pinMode(C1.pinTransistor, OUTPUT);
   pinMode(C2.pinTransistor, OUTPUT);
   pinMode(C3.pinTransistor, OUTPUT);
@@ -125,7 +125,6 @@ void loop()
 
   debugD("MesureFinale", MesureFinale);
   AffichageEcran(MesureFinale);
-  Serial.println(Mesure<finale);
 
 
   delay(1000);
@@ -133,10 +132,9 @@ void loop()
 
 /*
 Mesure la resistance avec le circuit C
-@param Circuit est la structure qui definit le circuit  
 */
-void Mesure(Circuit *C){
-  
+void Mesure(Circuit *C)
+{
   debug("Entree dans la Fonction mesure",0);
 
   C->MesureBruteVCC = analogRead(C->PinMesureVcc);                     //Mesures brutes
@@ -164,9 +162,9 @@ void Mesure(Circuit *C){
 
 /*
 Cette fonction ouvre les 3 circuits via les transistors 2n2222
-@param *C1 *C2 et C3* sont les pointeurs des 3 différents circuits
 */
-void ouvrir_les_circuits(Circuit *C1, Circuit *C2, Circuit *C3){
+void ouvrir_les_circuits(Circuit *C1, Circuit *C2, Circuit *C3)
+{
   digitalWrite(C1->pinTransistor, LOW);
   digitalWrite(C2->pinTransistor, LOW);
   digitalWrite(C3->pinTransistor, LOW);
@@ -198,9 +196,6 @@ void debugD(char txt[20], float var){
   return;
 }
 
-/*
-Cette fonction regarde la distance de chaque mesure avec le point central de l'ADC pour déterminer quelle est la mesure l aplus précise.
-*/
 float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3){
 
   debug("---///--- Entree dans la fonction MesureOptimale",0);
@@ -233,13 +228,9 @@ float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3){
   return -1;
 }
 
-/*
-Cette fonction gere l'afffichage sur l'ecran.
-@param val : valeur numérique de type float qu'on veut afficher
-*/
+
 void AffichageEcran(float val){
   TM1637Display display(CLK, DIO);
-  display.setBrightness(7);
   if (val<1000){
     debug("Condition 1",0);
     digitalWrite(pinK,LOW);
