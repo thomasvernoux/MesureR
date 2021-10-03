@@ -26,28 +26,30 @@ struct Circuit
 Circuit C1;
 Circuit C2;
 Circuit C3;
+Circuit C4;
 
 Circuit *ptrC1 = &C1;
 Circuit *ptrC2 = &C2;
 Circuit *ptrC3 = &C3;
+Circuit *ptrC4 = &C4;
 
 // Déclaration des fonctions
 void Mesure(Circuit *);
 void Constantes_setup();
-void ouvrir_les_circuits(Circuit *, Circuit *, Circuit *);
+void ouvrir_les_circuits(Circuit *, Circuit *, Circuit *, Circuit *);
 void debug(char txt[20], int var);
 void debugD(char txt[20], float var);
-float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3);
+float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3, Circuit *C4);
 void AffichageEcran(float val);
 
 // Déclaration des variables 
 int tps = 10; // temporisation en ms entre les changements d'états des circuits
-bool ModeDebug = false;
-int pinK = 6; // Pin qui connecte la LED (led des kilo)
+bool ModeDebug = true;
+int pinK = 5; // A5 : Pin qui connecte la LED (led des kilo)
 
 // Pines pour l'ecran
-#define CLK 9 //can be any digital pin
-#define DIO 8 //can be any digital pin
+#define CLK 12 //can be any digital pin
+#define DIO 10 //can be any digital pin
 
 void setup()
 {
@@ -58,29 +60,36 @@ void setup()
   Mesure(ptrC1);
 
   // SETUP STRUCTURES
-  C1.PinMesureVcc = 1;
-  C1.pinMesureResistance = 2;
+  C1.PinMesureVcc = 3;
+  C1.pinMesureResistance = 4;
   C1.Rshunt = 220;
-  C1.pinTransistor = 3;
+  C1.pinTransistor = 11;
   strcpy(C1.name, "C1");
 
-  C2.PinMesureVcc = 3;
-  C2.pinMesureResistance = 2;
+  C2.PinMesureVcc = 2;
+  C2.pinMesureResistance = 4;
   C2.Rshunt = 1000;
-  C2.pinTransistor = 4;
+  C2.pinTransistor = 8;
   strcpy(C2.name, "C2");
 
-  C3.PinMesureVcc = 4;
-  C3.pinMesureResistance = 2;
+  C3.PinMesureVcc = 1;
+  C3.pinMesureResistance = 4;
   C3.Rshunt = 100000;
   C3.pinTransistor = 5;
   strcpy(C3.name, "C3");
+
+  C4.PinMesureVcc = 0;
+  C4.pinMesureResistance = 4;
+  C4.Rshunt = 1000000;
+  C4.pinTransistor = 2;
+  strcpy(C4.name, "C4");
 
   // Pines OUT
   pinMode(C1.pinTransistor, OUTPUT);
   pinMode(C2.pinTransistor, OUTPUT);
   pinMode(C3.pinTransistor, OUTPUT);
-  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3);
+  pinMode(C4.pinTransistor, OUTPUT);
+  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
 
   // Setup Ecran
   TM1637Display display(CLK, DIO);
@@ -90,23 +99,29 @@ void setup()
 void loop()
 {
 
-  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3);
+  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
   digitalWrite(C1.pinTransistor, HIGH);
   delay(tps);
   Mesure(ptrC1);
 
-  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3);
+  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
   digitalWrite(C2.pinTransistor, HIGH);
   delay(tps);
   Mesure(ptrC2);
 
-  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3);
+  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
   digitalWrite(C3.pinTransistor, HIGH);
   delay(tps);
   Mesure(ptrC3);
-  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3);
+  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
 
-  float MesureFinale = MesureOptimale (ptrC1,ptrC2,ptrC3);
+  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
+  digitalWrite(C4.pinTransistor, HIGH);
+  delay(tps);
+  Mesure(ptrC4);
+  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
+
+  float MesureFinale = MesureOptimale (ptrC1,ptrC2,ptrC3,ptrC4);
 
   debug("C1.MesureBruteVCC", C1.MesureBruteVCC);
   debug("C1.MesureBruteResistance", C1.MesureBruteResistance);
@@ -164,12 +179,13 @@ void Mesure(Circuit *C){
 
 /*
 Cette fonction ouvre les 3 circuits via les transistors 2n2222
-@param *C1 *C2 et C3* sont les pointeurs des 3 différents circuits
+@param *C1 *C2 *C3 et *C4 sont les pointeurs des 4 différents circuits
 */
-void ouvrir_les_circuits(Circuit *C1, Circuit *C2, Circuit *C3){
+void ouvrir_les_circuits(Circuit *C1, Circuit *C2, Circuit *C3, Circuit *C4){
   digitalWrite(C1->pinTransistor, LOW);
   digitalWrite(C2->pinTransistor, LOW);
   digitalWrite(C3->pinTransistor, LOW);
+  digitalWrite(C4->pinTransistor, LOW);
 }
 
 
@@ -201,7 +217,7 @@ void debugD(char txt[20], float var){
 /*
 Cette fonction regarde la distance de chaque mesure avec le point central de l'ADC pour déterminer quelle est la mesure l aplus précise.
 */
-float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3){
+float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3, Circuit *C4){
 
   debug("---///--- Entree dans la fonction MesureOptimale",0);
   debug("C1->distance",C1->distance);
@@ -212,20 +228,25 @@ float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3){
   debugD("C3->MesureResistance",C3->MesureResistance);
   debug("Sortie de la fonction MesureOptimale",0);
 
-  if (C1->distance <= C2->distance && C1->distance <= C3->distance){
+  if (C1->distance <= C2->distance && C1->distance <= C3->distance && C1->distance <= C4->distance){
     Serial.println("Circuit 1");
     debugD("C1->Rmesure",C1->Rmesure);
     return (float)C1->Rmesure;
   }
-  else if (C2->distance <= C1->distance && C2->distance <= C3->distance){
+  else if (C2->distance <= C1->distance && C2->distance <= C3->distance && C2->distance <= C4->distance){
     Serial.println("Circuit 2");
     debugD("C2->Rmesure",C2->Rmesure);
     return (float)C2->Rmesure;
   }
-  else if (C3->distance <= C1->distance && C3->distance <= C2->distance){
+  else if (C3->distance <= C1->distance && C3->distance <= C2->distance && C3->distance <= C4->distance){
     Serial.println("Circuit 3");
     debugD("C3->Rmesure",C3->Rmesure);
     return (float)C3->Rmesure;
+  }
+  else if (C4->distance <= C1->distance && C4->distance <= C2->distance && C4->distance <= C3->distance){
+    Serial.println("Circuit 3");
+    debugD("C3->Rmesure",C3->Rmesure);
+    return (float)C4->Rmesure;
   }
   else{
     Serial.println("Grosse erreur");
@@ -242,20 +263,20 @@ void AffichageEcran(float val){
   display.setBrightness(7);
   if (val<1000){
     debug("Condition 1",0);
-    digitalWrite(pinK,LOW);
+    analogWrite(pinK,LOW);
     display.showNumberDec(val,false,4);
 
   }
   else if (val < 10000){
     debug("Condition 2",0);
-    digitalWrite(pinK,HIGH);
+    analogWrite(pinK,HIGH);
     float valD = (float) val; // val decimale
     valD /= 10;
     display.showNumberDecEx(valD, 0b01000000, false, 4, 0);
   }
   else {
     debug("Condition 3",0);
-    digitalWrite(pinK,HIGH);
+    analogWrite(pinK,HIGH);
     val /= 1000;
     display.showNumberDec(val,false,4);
   }
