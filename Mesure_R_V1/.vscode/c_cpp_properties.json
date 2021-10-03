@@ -5,8 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "A:\\Documents\\Arduino\\libraries\\**",
-                "C:\\Program Files (x86)\\Arduino\\libraries\\**",
-                "C:\\Program Files (x86)\\Arduino\\hardware\\**"
+                "C:\\Program Files (x86)\\Arduino\\hardware\\**",
+                "C:\\Program Files (x86)\\Arduino\\libraries\\**"
             ],
             "defines": [
                 "_DEBUG",
@@ -16,7 +16,13 @@
             ],
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "windows-msvc-x64"
+            "intelliSenseMode": "windows-msvc-x64",
+            "browse": {
+                "path": [
+                    "C:\\Program Files (x86)\\Arduino\\**",
+                    "A:\\Documents\\Arduino\\libraries\\**"
+                ]
+            }
         }
     ],
     "version": 4

@@ -1,0 +1,7 @@
+{
+    "port": "COM12",
+    "configuration": "cpu=atmega328old",
+    "board": "arduino:avr:nano",
+    "programmer": "arduino:avrisp",
+    "sketch": "Mesure_resistance_V2\\Mesure_resistance_V2.ino"
+}

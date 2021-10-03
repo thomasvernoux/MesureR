@@ -1,7 +1,11 @@
+/*
+Version V2 pour plaque de prototypage. Les pines sont différentes.
+*/
+
+#include <Arduino.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <String.h>
-#include <Arduino.h>
 #include <TM1637Display.h>
 
 
@@ -125,7 +129,7 @@ void loop()
 
   debugD("MesureFinale", MesureFinale);
   AffichageEcran(MesureFinale);
-  Serial.println(Mesure<finale);
+  Serial.println(MesureFinale);
 
 
   delay(1000);
