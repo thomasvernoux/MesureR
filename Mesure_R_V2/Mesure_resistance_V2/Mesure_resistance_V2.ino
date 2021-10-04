@@ -43,7 +43,7 @@ float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3, Circuit *C4);
 void AffichageEcran(float val);
 
 // Déclaration des variables 
-int tps = 10; // temporisation en ms entre les changements d'états des circuits
+int tps = 100; // temporisation en ms entre les changements d'états des circuits
 bool ModeDebug = true;
 int pinK = 5; // A5 : Pin qui connecte la LED (led des kilo)
 
@@ -123,6 +123,8 @@ void loop()
 
   float MesureFinale = MesureOptimale (ptrC1,ptrC2,ptrC3,ptrC4);
 
+  debug("DEBUG LOOP ----------------------------------------------------",0);
+
   debug("C1.MesureBruteVCC", C1.MesureBruteVCC);
   debug("C1.MesureBruteResistance", C1.MesureBruteResistance);
   debugD("C1.Rmesure", C1.Rmesure);
@@ -137,6 +139,13 @@ void loop()
   debug("C3.MesureBruteResistance", C3.MesureBruteResistance);
   debugD("C3.Rmesure", C3.Rmesure);
   debug("C3.distance", C3.distance);
+
+  debug("C4.MesureBruteVCC", C4.MesureBruteVCC);
+  debug("C4.MesureBruteResistance", C4.MesureBruteResistance);
+  debugD("C4.Rmesure", C4.Rmesure);
+  debug("C4.distance", C4.distance);
+
+  debug("///// FIN DEBUG LOOP ----------------------------------------------------",0);
 
   debugD("MesureFinale", MesureFinale);
   AffichageEcran(MesureFinale);
