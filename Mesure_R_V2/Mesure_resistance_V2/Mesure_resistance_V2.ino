@@ -18,7 +18,7 @@ struct Circuit
   int distance = 0; // distance de la mesure avec la moyenne pour avoir la fiabilité de la mesure
   int MesureBruteVCC = 0;
   int MesureBruteResistance = 0;
-  float MesureeVCC = 0;
+  float MesureVCC = 0;
   float MesureResistance = 0;
   int pinTransistor = 0;
 };
@@ -43,9 +43,9 @@ float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3, Circuit *C4);
 void AffichageEcran(float val);
 
 // Déclaration des variables 
-int tps = 100; // temporisation en ms entre les changements d'états des circuits
-bool ModeDebug = true;
-int pinK = 5; // A5 : Pin qui connecte la LED (led des kilo)
+int tps = 10; // temporisation en ms entre les changements d'états des circuits
+bool ModeDebug = false;
+int pinK = 3; // (led des kilo)
 
 // Pines pour l'ecran
 #define CLK 12 //can be any digital pin
@@ -56,32 +56,31 @@ void setup()
 
   pinMode(pinK, OUTPUT); // led Kilo
   Serial.begin(115200);
-
-  Mesure(ptrC1);
+  delay(100);
 
   // SETUP STRUCTURES
-  C1.PinMesureVcc = 3;
+  C1.PinMesureVcc = 0;
   C1.pinMesureResistance = 4;
-  C1.Rshunt = 220;
-  C1.pinTransistor = 11;
+  C1.Rshunt =10;
+  C1.pinTransistor = 2;
   strcpy(C1.name, "C1");
 
-  C2.PinMesureVcc = 2;
+  C2.PinMesureVcc = 1;
   C2.pinMesureResistance = 4;
-  C2.Rshunt = 1000;
-  C2.pinTransistor = 8;
+  C2.Rshunt = 330;
+  C2.pinTransistor = 5;
   strcpy(C2.name, "C2");
 
-  C3.PinMesureVcc = 1;
+  C3.PinMesureVcc = 2;
   C3.pinMesureResistance = 4;
-  C3.Rshunt = 100000;
-  C3.pinTransistor = 5;
+  C3.Rshunt = 5100;
+  C3.pinTransistor = 8;
   strcpy(C3.name, "C3");
 
-  C4.PinMesureVcc = 0;
+  C4.PinMesureVcc = 3;
   C4.pinMesureResistance = 4;
   C4.Rshunt = 1000000;
-  C4.pinTransistor = 2;
+  C4.pinTransistor = 11;
   strcpy(C4.name, "C4");
 
   // Pines OUT
@@ -98,11 +97,12 @@ void setup()
 
 void loop()
 {
-
   ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
   digitalWrite(C1.pinTransistor, HIGH);
   delay(tps);
   Mesure(ptrC1);
+
+
 
   ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
   digitalWrite(C2.pinTransistor, HIGH);
@@ -122,26 +122,35 @@ void loop()
   ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
 
   float MesureFinale = MesureOptimale (ptrC1,ptrC2,ptrC3,ptrC4);
+  Serial.println(MesureFinale);
 
   debug("DEBUG LOOP ----------------------------------------------------",0);
 
   debug("C1.MesureBruteVCC", C1.MesureBruteVCC);
-  debug("C1.MesureBruteResistance", C1.MesureBruteResistance);
+  debug("C1.MesureBruteResistance", C1.MesureResistance);
+  debugD("C1.MesureVCC", C1.MesureVCC);
+  debugD("C1.MesureResistance", C1.MesureResistance);
   debugD("C1.Rmesure", C1.Rmesure);
   debug("C1.distance", C1.distance);
 
   debug("C2.MesureBruteVCC", C2.MesureBruteVCC);
   debug("C2.MesureBruteResistance", C2.MesureBruteResistance);
+  debugD("C2.MesureVCC", C2.MesureVCC);
+  debugD("C2.MesureResistance", C2.MesureResistance);
   debugD("C2.Rmesure", C2.Rmesure);
   debug("C2.distance", C2.distance);
 
   debug("C3.MesureBruteVCC", C3.MesureBruteVCC);
   debug("C3.MesureBruteResistance", C3.MesureBruteResistance);
+  debugD("C3.MesureVCC", C3.MesureVCC);
+  debugD("C3.MesureResistance", C3.MesureResistance);
   debugD("C3.Rmesure", C3.Rmesure);
   debug("C3.distance", C3.distance);
 
   debug("C4.MesureBruteVCC", C4.MesureBruteVCC);
   debug("C4.MesureBruteResistance", C4.MesureBruteResistance);
+  debugD("C4.MesureVCC", C4.MesureVCC);
+  debugD("C4.MesureResistance", C4.MesureResistance);
   debugD("C4.Rmesure", C4.Rmesure);
   debug("C4.distance", C4.distance);
 
@@ -149,10 +158,10 @@ void loop()
 
   debugD("MesureFinale", MesureFinale);
   AffichageEcran(MesureFinale);
-  Serial.println(MesureFinale);
 
 
-  delay(1000);
+
+  delay(2000);
 }
 
 /*
@@ -166,15 +175,20 @@ void Mesure(Circuit *C){
   C->MesureBruteVCC = analogRead(C->PinMesureVcc);                     //Mesures brutes
   C->MesureBruteResistance = analogRead(C->pinMesureResistance);
 
-  C->MesureeVCC = (float)C->MesureBruteVCC / 1024 *5;                      //Mesures en V
+  C->MesureVCC = (float)C->MesureBruteVCC / 1024 *5;                      //Mesures en V
   C->MesureResistance = (float)C->MesureBruteResistance / 1024 * 5;
 
-  C->Rmesure = C->MesureResistance / (C->MesureeVCC - C->MesureResistance) * C->Rshunt;
+  C->Rmesure = (float)C->MesureResistance / (C->MesureVCC - C->MesureResistance) * C->Rshunt;
   C->distance = abs((1024 - C->MesureBruteVCC /2 ) - C->MesureBruteResistance);
 
-  debugD("C->MesureeVCC",C->MesureeVCC);
+  debug(C->name,0);
+  debug("C->MesureBruteVCC",C->MesureBruteVCC);
+  debug("C->MesureBruteResistance",C->MesureBruteResistance);
+  debugD("C->MesureeVCC",C->MesureVCC);
   debugD("C->MesureResistance",C->MesureResistance);
   debugD("C->Rmesure",C->Rmesure);
+
+
 
   if(C->Rmesure < 0){ // possibnle pour les grandes resistances avec un Rshunt petit
     C->distance = 2000;
@@ -235,6 +249,8 @@ float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3, Circuit *C4){
   debugD("C2->MesureResistance",C2->MesureResistance);
   debug("C3->distance",C3->distance);
   debugD("C3->MesureResistance",C3->MesureResistance);
+  debug("C4->distance",C4->distance);
+  debugD("C4->MesureResistance",C4->MesureResistance);
   debug("Sortie de la fonction MesureOptimale",0);
 
   if (C1->distance <= C2->distance && C1->distance <= C3->distance && C1->distance <= C4->distance){
@@ -259,8 +275,9 @@ float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3, Circuit *C4){
   }
   else{
     Serial.println("Grosse erreur");
+    return 1;
   }
-  return -1;
+  return 1;
 }
 
 /*
@@ -272,23 +289,25 @@ void AffichageEcran(float val){
   display.setBrightness(7);
   if (val<1000){
     debug("Condition 1",0);
-    analogWrite(pinK,LOW);
+    digitalWrite(pinK,LOW);
     display.showNumberDec(val,false,4);
 
   }
   else if (val < 10000){
     debug("Condition 2",0);
-    analogWrite(pinK,HIGH);
+    digitalWrite(pinK,HIGH);
     float valD = (float) val; // val decimale
     valD /= 10;
     display.showNumberDecEx(valD, 0b01000000, false, 4, 0);
   }
   else {
     debug("Condition 3",0);
-    analogWrite(pinK,HIGH);
+    digitalWrite(pinK,HIGH);
     val /= 1000;
     display.showNumberDec(val,false,4);
   }
+
+  
 
   return;
 }
