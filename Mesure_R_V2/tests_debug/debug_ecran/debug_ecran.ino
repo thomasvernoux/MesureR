@@ -1,3 +1,7 @@
+
+
+
+
 #include <Arduino.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,12 +45,12 @@ void debug(char txt[20], int var);
 void debugD(char txt[20], float var);
 float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3, Circuit *C4);
 void AffichageEcran(float val);
-void clignotter_led(int pinK);
 
 // Déclaration des variables 
 int tps = 10; // temporisation en ms entre les changements d'états des circuits
 bool ModeDebug = false;
 int pinK = 3; // (led des kilo)
+int i = 0;
 
 // Pines pour l'ecran
 #define CLK 12 //can be any digital pin
@@ -58,7 +62,6 @@ void setup()
   pinMode(pinK, OUTPUT); // led Kilo
   Serial.begin(115200);
   delay(100);
-  clignotter_led(pinK);
 
   // SETUP STRUCTURES
   C1.PinMesureVcc = 0;
@@ -75,7 +78,7 @@ void setup()
 
   C3.PinMesureVcc = 2;
   C3.pinMesureResistance = 4;
-  C3.Rshunt = 10000;
+  C3.Rshunt = 5100;
   C3.pinTransistor = 8;
   strcpy(C3.name, "C3");
 
@@ -95,75 +98,21 @@ void setup()
   // Setup Ecran
   TM1637Display display(CLK, DIO);
   display.setBrightness(7);
+  
 }
 
 void loop()
 {
-  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
-  digitalWrite(C1.pinTransistor, HIGH);
-  delay(tps);
-  Mesure(ptrC1);
+    TM1637Display display(CLK, DIO);
+    display.setBrightness(7);
+    display.showNumberDec(i,false,4);
+    i++;
+    delay(100);
+    
+  
 
 
 
-  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
-  digitalWrite(C2.pinTransistor, HIGH);
-  delay(tps);
-  Mesure(ptrC2);
-
-  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
-  digitalWrite(C3.pinTransistor, HIGH);
-  delay(tps);
-  Mesure(ptrC3);
-  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
-
-  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
-  digitalWrite(C4.pinTransistor, HIGH);
-  delay(tps);
-  Mesure(ptrC4);
-  ouvrir_les_circuits(ptrC1, ptrC2, ptrC3, ptrC4);
-
-  float MesureFinale = MesureOptimale (ptrC1,ptrC2,ptrC3,ptrC4);
-  Serial.println(MesureFinale);
-
-  debug("DEBUG LOOP ----------------------------------------------------",0);
-
-  debug("C1.MesureBruteVCC", C1.MesureBruteVCC);
-  debug("C1.MesureBruteResistance", C1.MesureResistance);
-  debugD("C1.MesureVCC", C1.MesureVCC);
-  debugD("C1.MesureResistance", C1.MesureResistance);
-  debugD("C1.Rmesure", C1.Rmesure);
-  debug("C1.distance", C1.distance);
-
-  debug("C2.MesureBruteVCC", C2.MesureBruteVCC);
-  debug("C2.MesureBruteResistance", C2.MesureBruteResistance);
-  debugD("C2.MesureVCC", C2.MesureVCC);
-  debugD("C2.MesureResistance", C2.MesureResistance);
-  debugD("C2.Rmesure", C2.Rmesure);
-  debug("C2.distance", C2.distance);
-
-  debug("C3.MesureBruteVCC", C3.MesureBruteVCC);
-  debug("C3.MesureBruteResistance", C3.MesureBruteResistance);
-  debugD("C3.MesureVCC", C3.MesureVCC);
-  debugD("C3.MesureResistance", C3.MesureResistance);
-  debugD("C3.Rmesure", C3.Rmesure);
-  debug("C3.distance", C3.distance);
-
-  debug("C4.MesureBruteVCC", C4.MesureBruteVCC);
-  debug("C4.MesureBruteResistance", C4.MesureBruteResistance);
-  debugD("C4.MesureVCC", C4.MesureVCC);
-  debugD("C4.MesureResistance", C4.MesureResistance);
-  debugD("C4.Rmesure", C4.Rmesure);
-  debug("C4.distance", C4.distance);
-
-  debug("///// FIN DEBUG LOOP ----------------------------------------------------",0);
-
-  debugD("MesureFinale", MesureFinale);
-  AffichageEcran(MesureFinale);
-
-
-
-  delay(2000);
 }
 
 /*
@@ -271,8 +220,8 @@ float MesureOptimale (Circuit *C1, Circuit *C2, Circuit *C3, Circuit *C4){
     return (float)C3->Rmesure;
   }
   else if (C4->distance <= C1->distance && C4->distance <= C2->distance && C4->distance <= C3->distance){
-    Serial.println("Circuit 4");
-    debugD("C4->Rmesure",C4->Rmesure);
+    Serial.println("Circuit 3");
+    debugD("C3->Rmesure",C3->Rmesure);
     return (float)C4->Rmesure;
   }
   else{
@@ -314,13 +263,17 @@ void AffichageEcran(float val){
   return;
 }
 
-/* Permet de faire clignotter la led au demarrage pour être sur qu'elle fonctionne bien */
-void clignotter_led(int pinK){
-    digitalWrite(pinK,HIGH);
-    delay(500);
-    digitalWrite(pinK,LOW);
-  return;
-}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
